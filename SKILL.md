@@ -11,12 +11,12 @@ Exposes specialized slash commands and automated workflows to load binaries, ana
 
 ---
 
-## ⚡ Slash Commands Reference
+## Slash Commands Reference
 
 | Slash Command | Argument | Purpose |
 |---|---|---|
 | `/load <path>` | Full executable path | Loads binary into x64dbg, runs to entry point, and analyzes PE module |
-| `/patch <path>` | Full executable path | Loads binary, locates key-check conditional jump, and patches `je` ➔ `jne` (or `nop`) to bypass login when invalid keys are entered |
+| `/patch <path>` | Full executable path | Loads binary, locates key-check conditional jump, and patches `je` -> `jne` (or `nop`) to bypass login when invalid keys are entered |
 | `/extract-key <path>` | Full executable path | Breaks at string comparison (`strcmp`) and extracts valid license key from registers/memory |
 | `/state` | None | Inspects current debugger state, RIP/EIP address, current instruction, and registers |
 | `/bp <target>` | Address or symbol name | Sets software breakpoint and previews surrounding disassembly |
@@ -24,7 +24,7 @@ Exposes specialized slash commands and automated workflows to load binaries, ana
 
 ---
 
-## 🔌 Automatic Plugin Verification & Installation (Auto-Setup)
+## Automatic Plugin Verification & Installation (Auto-Setup)
 
 If `x64dbg-MCP-Server.dp64` is not yet installed or x64dbg port 9094 is not responding:
 
@@ -46,7 +46,7 @@ If `x64dbg-MCP-Server.dp64` is not yet installed or x64dbg port 9094 is not resp
 
 ---
 
-## 🛠️ Workflows
+## Workflows
 
 ### 1. `/load <path>` — Automated Binary Loading & Analysis
 
@@ -150,7 +150,7 @@ Step 2: Revert Memory
 
 ---
 
-## 🔧 MCP Tools Quick Reference (x64dbg-mcp-server)
+## MCP Tools Quick Reference (x64dbg-mcp-server)
 
 | Category | Key MCP Tools |
 |---|---|
@@ -163,7 +163,7 @@ Step 2: Revert Memory
 
 ---
 
-## 📋 MCP Client Configuration
+## MCP Client Configuration
 
 Add to your MCP configuration (`mcp_config.json` or `.mcp.json`):
 
@@ -181,4 +181,4 @@ Add to your MCP configuration (`mcp_config.json` or `.mcp.json`):
 }
 ```
 
-> **Note:** Token can be retrieved or configured in x64dbg via **Plugins ➔ x64dbg-MCP Server ➔ Options**.
+> **Note:** Token can be retrieved or configured in x64dbg via **Plugins -> x64dbg-MCP Server -> Options**.

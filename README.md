@@ -1,25 +1,25 @@
 # skills-x64dbg-mcp-server
 
-AI Agent Skill สำหรับการทำ Reverse Engineering, วิเคราะห์ PE Binary, แกะ License Key, และ Patch Assembly เพื่อบายพาสการตรวจคีย์บน **x64dbg** ผ่าน **x64dbg-MCP Server**
+AI Agent Skill for reverse engineering, PE binary analysis, license key extraction, and assembly patching to bypass key verification on x64dbg via x64dbg-MCP Server.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
 ---
 
-## 🚀 การติดตั้งสกิลและปลั๊กอินอัตโนมัติ (Automatic Installation)
+## Automatic Installation
 
-เมื่อรันคำสั่งติดตั้ง สคริปต์จะทำการ:
-1. **ติดตั้ง SKILL.md** เข้าสู่ Agent (Antigravity, Claude Code, Universal Agents)
-2. **ตรวจหาโฟลเดอร์ x64dbg** ในเครื่องของคุณโดยอัตโนมัติ
-3. **ติดตั้งปลั๊กอิน `x64dbg-MCP-Server.dp64` และ `.dp32`** ลงในโฟลเดอร์ `x64\plugins\` ให้อัตโนมัติทันทีหากยังไม่มี
-4. **สร้างไฟล์คอนฟิก `mcp_config.json`** พร้อม Bearer Token เชื่อมต่ออัตโนมัติ
+When you run the installation command, the installer will automatically:
+1. Install `SKILL.md` into supported AI agent directories (Antigravity, Claude Code, Universal Agents).
+2. Auto-detect x64dbg installations across your system and active processes.
+3. Automatically install `x64dbg-MCP-Server.dp64` and `.dp32` into your x64dbg plugins directory (`x64\plugins\`) if not already present.
+4. Generate `mcp_config.json` with a pre-configured Bearer token for seamless connection.
 
-### ติดตั้งผ่าน `npx`:
+### Install via npx:
 ```bash
 npx github:phwyverysad/skills-x64dbg-mcp-server
 ```
 
-หรือหาก clone repository มาไว้ในเครื่อง:
+Or by cloning the repository locally:
 ```bash
 git clone https://github.com/phwyverysad/skills-x64dbg-mcp-server.git
 cd skills-x64dbg-mcp-server
@@ -28,22 +28,22 @@ npm run install-skill
 
 ---
 
-## ⚡ คำสั่ง Slash Commands ที่รองรับ
+## Supported Slash Commands
 
-| คำสั่ง | พารามิเตอร์ | การทำงาน |
+| Command | Parameter | Description |
 |---|---|---|
-| `/load` | `<path>` | โหลดไฟล์ Executable เข้าสู่ x64dbg พร้อมหา Module Base Address และ Entry Point |
-| `/patch` | `<path>` | โหลดไฟล์เข้า x64dbg และค้นหาคำสั่งกระโดดเงื่อนไข (`je` ➔ `jne` หรือ `nop`) เพื่อ Patch ให้ใส่**คีย์มั่ว**แล้วล็อกอินผ่าน |
-| `/extract-key` | `<path>` | ตั้ง Breakpoint ที่จุดเปรียบเทียบสตริง (`strcmp`) แล้วดึงค่าคีย์จริงจาก Memory/Registers |
-| `/state` | - | ตรวจสอบสถานะปัจจุบันของ x64dbg (Paused, Running, RIP Address, Registers) |
-| `/bp` | `<address>` | ตั้ง Breakpoint ณ ตำแหน่ง Address หรือ Symbol ที่ระบุ |
-| `/restore` | - | คืนค่า (Restore) คำสั่ง Assembly ทั้งหมดที่เคย Patch ไว้กลับสู่ค่าเดิม |
+| `/load` | `<path>` | Loads executable into x64dbg, runs to entry point, and retrieves PE module metadata |
+| `/patch` | `<path>` | Loads binary, locates conditional jump (`je` -> `jne` or `nop`), and patches it to bypass login with invalid/random keys |
+| `/extract-key` | `<path>` | Sets breakpoint at string comparison (`strcmp`) and extracts valid license key from registers/memory |
+| `/state` | None | Displays current x64dbg status (Paused, Running, RIP address, registers) |
+| `/bp` | `<address>` | Sets breakpoint at target address or function symbol |
+| `/restore` | None | Reverts all patched assembly instructions back to original bytes |
 
 ---
 
-## 🛠️ การตั้งค่า MCP Client
+## MCP Client Configuration
 
-เชื่อมต่อกับ x64dbg-mcp-server โดยเพิ่มในไฟล์ `mcp_config.json` หรือ `.mcp.json`:
+Connect to x64dbg-mcp-server by adding the following to your `mcp_config.json` or `.mcp.json`:
 
 ```json
 {
@@ -59,25 +59,29 @@ npm run install-skill
 }
 ```
 
-> **หมายเหตุ:** นำปลั๊กอิน `x64dbg-MCP-Server.dp64` ไปวางในโฟลเดอร์ `x64\plugins\` ของ x64dbg และเปิด x64dbg ก่อนใช้งาน
+> Note: The installer configures this automatically. If configuring manually, copy the plugin `x64dbg-MCP-Server.dp64` to `<x64dbg>\x64\plugins\` and launch x64dbg before connecting.
 
 ---
 
-## 📂 โครงสร้างภายในโปรเจกต์
+## Project Structure
 
 ```
 skills-x64dbg-mcp-server/
-├── SKILL.md                  # สกิลหลักสำหรับ AI Agent
+├── SKILL.md                  # Main AI agent skill definition
 ├── package.json              # npm package metadata
 ├── bin/
-│   └── install.js            # Node.js installer script สำหรับ npx
+│   └── install.js            # Node.js installer script for npx
+├── plugins/
+│   ├── x64/                  # x64dbg-MCP-Server.dp64 binary
+│   └── x32/                  # x64dbg-MCP-Server.dp32 binary
 ├── examples/
-│   └── keycheck_example.cpp  # ตัวอย่างโปรแกรม C++ CrackMe สำหรับฝึกทดลอง
+│   └── keycheck_example.cpp  # Sample C++ CrackMe source code
 ├── .gitignore
+├── LICENSE                   # MIT License
 └── README.md
 ```
 
 ---
 
-## 📄 License
-MIT License - ดูรายละเอียดในไฟล์ LICENSE
+## License
+MIT License - See LICENSE file for details.

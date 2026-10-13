@@ -44,7 +44,7 @@ for (const targetDir of candidateDirectories) {
       }
       const destFile = path.join(targetDir, 'SKILL.md');
       fs.writeFileSync(destFile, skillContent, 'utf8');
-      console.log(`[+] Installed SKILL.md ➔ ${destFile}`);
+      console.log(`[+] Installed SKILL.md -> ${destFile}`);
       installedSkillsCount++;
     }
   } catch (err) {
@@ -56,7 +56,7 @@ if (installedSkillsCount === 0) {
   const fallbackDir = path.resolve(process.cwd(), '.agents', 'skills', 'x64dbg-mcp');
   fs.mkdirSync(fallbackDir, { recursive: true });
   fs.writeFileSync(path.join(fallbackDir, 'SKILL.md'), skillContent, 'utf8');
-  console.log(`[+] Installed SKILL.md locally ➔ ${path.join(fallbackDir, 'SKILL.md')}`);
+  console.log(`[+] Installed SKILL.md locally -> ${path.join(fallbackDir, 'SKILL.md')}`);
 }
 
 // --- 2. Auto-detect x64dbg installations and auto-install x64dbg-MCP-Server.dp64 ---
@@ -139,11 +139,11 @@ for (const root of candidateX64dbgRoots) {
       }
       if (fs.existsSync(dp64Source)) {
         fs.copyFileSync(dp64Source, targetDp64);
-        console.log(`[+] Auto-installed x64 plugin ➔ ${targetDp64}`);
+        console.log(`[+] Auto-installed x64 plugin -> ${targetDp64}`);
         installedPluginCount++;
       }
     } else {
-      console.log(`[✓] x64 plugin already installed ➔ ${targetDp64}`);
+      console.log(`[+] x64 plugin verified -> ${targetDp64}`);
       installedPluginCount++;
     }
 
@@ -157,7 +157,7 @@ for (const root of candidateX64dbgRoots) {
         AuthToken: defaultAuthToken
       };
       fs.writeFileSync(mcpConfigPath, JSON.stringify(mcpConfig, null, 2), 'utf8');
-      console.log(`[+] Created pre-configured mcp_config.json ➔ ${mcpConfigPath}`);
+      console.log(`[+] Created pre-configured mcp_config.json -> ${mcpConfigPath}`);
     }
 
     // Also install x32 plugin if x32 directory exists
@@ -169,7 +169,7 @@ for (const root of candidateX64dbgRoots) {
           fs.mkdirSync(plugins32Dir, { recursive: true });
         }
         fs.copyFileSync(dp32Source, targetDp32);
-        console.log(`[+] Auto-installed x32 plugin ➔ ${targetDp32}`);
+        console.log(`[+] Auto-installed x32 plugin -> ${targetDp32}`);
       }
     }
   }
@@ -198,7 +198,7 @@ try {
     };
     fs.mkdirSync(globalMcpConfigDir, { recursive: true });
     fs.writeFileSync(globalMcpConfigFile, JSON.stringify(existingConfig, null, 2), 'utf8');
-    console.log(`[+] Configured global client MCP config ➔ ${globalMcpConfigFile}`);
+    console.log(`[+] Configured global client MCP config -> ${globalMcpConfigFile}`);
   }
 } catch (e) {}
 

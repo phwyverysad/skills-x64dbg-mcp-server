@@ -211,9 +211,10 @@ if (installedPluginCount > 0) {
 }
 console.log('------------------------------------------------------\n');
 console.log('Ready to use! Available slash commands:');
-console.log('  /load <path>        - Load binary into x64dbg');
-console.log('  /patch <path>       - Patch conditional jump to bypass key verification');
-console.log('  /extract-key <path> - Extract valid serial key from memory');
-console.log('  /state              - View debugger state');
-console.log('  /bp <address>       - Set breakpoint');
-console.log('  /restore            - Revert patched assembly\n');
+console.log('  /load <path>            - Load binary into x64dbg');
+console.log('  /override-branch <path> - Invert conditional branch (je -> jne) for path testing');
+console.log('  /invert-jump <path>     - Alias for /override-branch');
+console.log('  /extract-key <path>     - Inspect memory and read runtime key');
+console.log('  /state                  - View debugger state');
+console.log('  /bp <address>           - Set breakpoint');
+console.log('  /restore                - Revert patched assembly\n');

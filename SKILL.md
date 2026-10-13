@@ -1,13 +1,13 @@
 ---
 name: x64dbg-mcp
-description: "Use when reverse engineering, analyzing PE binaries, extracting serial keys, setting breakpoints, or patching conditional jumps using x64dbg via x64dbg-mcp-server over MCP. Trigger with /load <path>, /patch <path>, /extract-key <path>, /state, or /bp <address>."
+description: "Use when debugging, analyzing PE binaries, inspecting memory, setting breakpoints, or inverting branch instructions using x64dbg via x64dbg-mcp-server over MCP. Trigger with /load <path>, /override-branch <path>, /extract-key <path>, /state, or /bp <address>."
 ---
 
-# x64dbg MCP Reverse Engineering & Patching Skill
+# x64dbg MCP Dynamic Debugging & Branch Analysis Skill
 
 Comprehensive guide and automation workflows for controlling **x64dbg** programmatically through the **x64dbg-MCP Server**.
 
-Exposes specialized slash commands and automated workflows to load binaries, analyze routines, extract keys from memory, and patch branching instructions (`je` ➔ `jne` / `nop`) to bypass key verification when invalid or random keys are entered.
+Exposes specialized slash commands and automated workflows to load binaries, analyze routines, inspect memory, and invert conditional branch instructions (`je` -> `jne` / `nop`) to test alternative execution paths during dynamic debugging.
 
 ---
 
@@ -16,11 +16,12 @@ Exposes specialized slash commands and automated workflows to load binaries, ana
 | Slash Command | Argument | Purpose |
 |---|---|---|
 | `/load <path>` | Full executable path | Loads binary into x64dbg, runs to entry point, and analyzes PE module |
-| `/patch <path>` | Full executable path | Loads binary, locates key-check conditional jump, and patches `je` -> `jne` (or `nop`) to bypass login when invalid keys are entered |
-| `/extract-key <path>` | Full executable path | Breaks at string comparison (`strcmp`) and extracts valid license key from registers/memory |
+| `/override-branch <path>` | Full executable path | Loads binary, locates target conditional jump, and inverts `je` -> `jne` (or `nop`) to test alternate execution path |
+| `/invert-jump <path>` | Full executable path | Alias for `/override-branch` |
+| `/extract-key <path>` | Full executable path | Breaks at string comparison (`strcmp`) and reads runtime key from registers/memory |
 | `/state` | None | Inspects current debugger state, RIP/EIP address, current instruction, and registers |
 | `/bp <target>` | Address or symbol name | Sets software breakpoint and previews surrounding disassembly |
-| `/restore` | None | Restores all applied patches back to original executable bytes |
+| `/restore` | None | Restores all applied memory edits back to original executable bytes |
 
 ---
 
@@ -72,40 +73,40 @@ Step 4: Report to User
 
 ---
 
-### 2. `/patch <path>` — Automatic Login & Key Verification Bypass
+### 2. `/override-branch <path>` (or `/invert-jump <path>`) — Invert Branch Instruction for Alternate Path Testing
 
-When the user enters `/patch <path>`:
+When the user enters `/override-branch <path>` or `/invert-jump <path>`:
 
-**Objective:** Allow any invalid or random key ("คีย์มั่ว") to successfully pass verification and grant access.
+**Objective:** Invert conditional branching logic to test the alternate execution branch during dynamic debugging.
 
 ```text
 Step 1: Ensure Target is Loaded
-  ➔ Check GetDebugState; if NO_TARGET, invoke LoadBinary(filePath: "<path>").
+  -> Check GetDebugState; if NO_TARGET, invoke LoadBinary(filePath: "<path>").
 
-Step 2: Locate Key Verification Logic
-  ➔ Call MCP tool: SearchForStrings(searchText: "Invalid") or SearchForStrings(searchText: "Key") or SearchForStrings(searchText: "Denied")
-  ➔ Alternatively, scan for references to "Success" or "Access Granted".
-  ➔ Read cross-references (xrefs) to find the caller function.
+Step 2: Locate Branch Decision Logic
+  -> Call MCP tool: SearchForStrings(searchText: "Invalid") or SearchForStrings(searchText: "Key")
+  -> Scan references to locate the conditional decision block.
+  -> Read cross-references (xrefs) to find the caller function.
 
 Step 3: Disassemble Decision Block
-  ➔ Call MCP tool: Disassemble at the caller function address (count: 20).
-  ➔ Identify the conditional jump following the comparison:
+  -> Call MCP tool: Disassemble at the caller function address (count: 20).
+  -> Identify the conditional jump following the comparison:
      - Typical pattern:
-       call <VerifyKey>
+       call <VerifyFunction>
        test al, al / test eax, eax
        je   <loc_failure>      ; 0x74 xx (short) or 0x0F 0x84 xx xx xx xx (near)
        call <OnSuccess>
 
-Step 4: Execute Assembly Patch
-  ➔ Calculate target instruction address.
-  ➔ Call MCP tool: PatchAssembly or WriteMemToAddress
+Step 4: Execute Branch Modification
+  -> Calculate target instruction address.
+  -> Call MCP tool: PatchAssembly or WriteMemToAddress
      - Option A: Change `je <failure>` to `jne <failure>` (Inverts condition)
-     - Option B: Change `je <failure>` to two NOPs (0x90 0x90) (Falls through to Success)
-  ➔ Call MCP tool: GetPatches to verify applied patch.
+     - Option B: Change `je <failure>` to two NOPs (0x90 0x90) (Falls through to success branch)
+  -> Call MCP tool: GetPatches to verify applied memory edit.
 
 Step 5: Verify & Report
-  ➔ Call Disassemble to show the patched disassembly block to the user.
-  ➔ Confirm that entering any random key will now trigger Access Granted.
+  -> Call Disassemble to show the updated disassembly block to the user.
+  -> Confirm that the branch condition has been inverted.
 ```
 
 ---

@@ -16,7 +16,8 @@ Exposes specialized slash commands and automated workflows to load binaries, ana
 | Slash Command | Argument | Purpose |
 |---|---|---|
 | `/load <path>` | Full executable path | Loads binary into x64dbg, runs to entry point, and analyzes PE module |
-| `/override-branch <path>` | Full executable path | Loads binary, locates target conditional jump, and inverts `je` -> `jne` (or `nop`) to test alternate execution path |
+| `/patch <path>` | Full executable path | Inverts conditional jump (`je` -> `jne`) and saves patched executable `<name>_patched.exe` in the same directory |
+| `/override-branch <path>` | Full executable path | Alias for `/patch` (inverts `je` -> `jne` or `nop` in memory and exports patched binary) |
 | `/invert-jump <path>` | Full executable path | Alias for `/override-branch` |
 | `/extract-key <path>` | Full executable path | Breaks at string comparison (`strcmp`) and reads runtime key from registers/memory |
 | `/state` | None | Inspects current debugger state, RIP/EIP address, current instruction, and registers |
@@ -73,11 +74,11 @@ Step 4: Report to User
 
 ---
 
-### 2. `/override-branch <path>` (or `/invert-jump <path>`) — Invert Branch Instruction for Alternate Path Testing
+### 2. `/patch <path>` (or `/override-branch <path>`) — Invert Branch and Export Patched Binary
 
-When the user enters `/override-branch <path>` or `/invert-jump <path>`:
+When the user enters `/patch <path>` or `/override-branch <path>`:
 
-**Objective:** Invert conditional branching logic to test the alternate execution branch during dynamic debugging.
+**Objective:** Invert conditional branching logic to test the alternate execution branch, and automatically save the modified binary into the **same directory** as the target file.
 
 ```text
 Step 1: Ensure Target is Loaded
@@ -97,16 +98,22 @@ Step 3: Disassemble Decision Block
        je   <loc_failure>      ; 0x74 xx (short) or 0x0F 0x84 xx xx xx xx (near)
        call <OnSuccess>
 
-Step 4: Execute Branch Modification
+Step 4: Execute Live Memory Modification (x64dbg)
   -> Calculate target instruction address.
-  -> Call MCP tool: PatchAssembly or WriteMemToAddress
-     - Option A: Change `je <failure>` to `jne <failure>` (Inverts condition)
-     - Option B: Change `je <failure>` to two NOPs (0x90 0x90) (Falls through to success branch)
+  -> Call MCP tool: WriteMemToAddress with inverted bytes (e.g., 0x75 0x07 for jne, or 0x90 0x90 for NOP).
   -> Call MCP tool: GetPatches to verify applied memory edit.
 
-Step 5: Verify & Report
-  -> Call Disassemble to show the updated disassembly block to the user.
-  -> Confirm that the branch condition has been inverted.
+Step 5: Export Patched Binary to Same Directory
+  -> Determine target directory and filename from <path>:
+     Directory: dirname(<path>)
+     Patched Filename: <basename>_patched.exe
+     Output File: path.join(dirname(<path>), "<basename>_patched.exe")
+  -> Read target file bytes, modify the jump opcode at the corresponding raw file offset, and write to output file.
+
+Step 6: Verify & Report
+  -> Show the updated disassembly block from x64dbg.
+  -> Report the generated patched file path: `<path_directory>/<filename>_patched.exe`.
+  -> Verify that executing `<filename>_patched.exe` with any random input successfully triggers the alternate branch.
 ```
 
 ---

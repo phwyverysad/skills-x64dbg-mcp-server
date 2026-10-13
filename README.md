@@ -33,7 +33,8 @@ npm run install-skill
 | Command | Parameter | Description |
 |---|---|---|
 | `/load` | `<path>` | Loads executable into x64dbg, runs to entry point, and retrieves PE module metadata |
-| `/override-branch` | `<path>` | Loads binary, locates conditional jump (`je` -> `jne` or `nop`), and inverts branch to test alternate execution path |
+| `/patch` | `<path>` | Inverts branch condition and exports patched executable `<name>_patched.exe` to the same folder |
+| `/override-branch` | `<path>` | Alias for `/patch` (inverts `je` -> `jne` or `nop` in memory and exports patched binary) |
 | `/invert-jump` | `<path>` | Alias for `/override-branch` |
 | `/extract-key` | `<path>` | Sets breakpoint at string comparison (`strcmp`) and extracts valid license key from registers/memory |
 | `/state` | None | Displays current x64dbg status (Paused, Running, RIP address, registers) |

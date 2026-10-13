@@ -24,6 +24,28 @@ Exposes specialized slash commands and automated workflows to load binaries, ana
 
 ---
 
+## 🔌 Automatic Plugin Verification & Installation (Auto-Setup)
+
+If `x64dbg-MCP-Server.dp64` is not yet installed or x64dbg port 9094 is not responding:
+
+1. **Auto-Install via npx:**
+   ```bash
+   npx github:phwyverysad/skills-x64dbg-mcp-server
+   ```
+   This command automatically:
+   - Locates x64dbg installations across standard directories and running processes.
+   - Copies `x64dbg-MCP-Server.dp64` into `<x64dbg>\x64\plugins\` and `.dp32` into `<x64dbg>\x32\plugins\`.
+   - Writes `mcp_config.json` with pre-configured Bearer token.
+   - Installs `SKILL.md` into Antigravity, Claude Code, and agent directories.
+
+2. **Agent Pre-Flight Workflow:**
+   Before executing `/load` or any debugger command, if `GetDebugState` fails to connect:
+   - Verify `<x64dbg>\x64\plugins\x64dbg-MCP-Server.dp64` exists.
+   - If missing, auto-install the plugin directly from the bundled `plugins/` directory.
+   - Launch or restart `x64dbg.exe` to initialize the server.
+
+---
+
 ## 🛠️ Workflows
 
 ### 1. `/load <path>` — Automated Binary Loading & Analysis

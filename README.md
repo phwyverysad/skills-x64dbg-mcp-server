@@ -6,17 +6,20 @@ AI Agent Skill สำหรับการทำ Reverse Engineering, วิเ�
 
 ---
 
-## 🚀 การติดตั้งสกิล (Installation)
+## 🚀 การติดตั้งสกิลและปลั๊กอินอัตโนมัติ (Automatic Installation)
 
-### วิธีที่ 1: ติดตั้งผ่าน `npx` (แนะนำ)
-สามารถรันคำสั่งด้านล่างนี้ได้โดยตรง:
+เมื่อรันคำสั่งติดตั้ง สคริปต์จะทำการ:
+1. **ติดตั้ง SKILL.md** เข้าสู่ Agent (Antigravity, Claude Code, Universal Agents)
+2. **ตรวจหาโฟลเดอร์ x64dbg** ในเครื่องของคุณโดยอัตโนมัติ
+3. **ติดตั้งปลั๊กอิน `x64dbg-MCP-Server.dp64` และ `.dp32`** ลงในโฟลเดอร์ `x64\plugins\` ให้อัตโนมัติทันทีหากยังไม่มี
+4. **สร้างไฟล์คอนฟิก `mcp_config.json`** พร้อม Bearer Token เชื่อมต่ออัตโนมัติ
 
+### ติดตั้งผ่าน `npx`:
 ```bash
 npx github:phwyverysad/skills-x64dbg-mcp-server
 ```
 
 หรือหาก clone repository มาไว้ในเครื่อง:
-
 ```bash
 git clone https://github.com/phwyverysad/skills-x64dbg-mcp-server.git
 cd skills-x64dbg-mcp-server

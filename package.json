@@ -1,0 +1,28 @@
+{
+  "name": "skills-x64dbg-mcp-server",
+  "version": "1.0.0",
+  "description": "Agent skill for x64dbg-mcp-server reverse engineering and binary patching",
+  "main": "bin/install.js",
+  "bin": {
+    "skills-x64dbg-mcp-server": "./bin/install.js",
+    "x64dbg-skill": "./bin/install.js"
+  },
+  "scripts": {
+    "install-skill": "node bin/install.js",
+    "start": "node bin/install.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phwyverysad/skills-x64dbg-mcp-server.git"
+  },
+  "keywords": [
+    "antigravity",
+    "skills",
+    "x64dbg",
+    "mcp",
+    "reverse-engineering",
+    "patching"
+  ],
+  "author": "phwyverysad",
+  "license": "MIT"
+}
